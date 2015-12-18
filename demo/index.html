@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>demo</title>
+	<script type="text/javascript" src="../src/mondo.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+	window.onload = function(){
+		R.settings.DEBUG = true;
+
+		R.ajax("POST","",{type:1},
+			function(result){
+			console.log(result);
+		},function(error){
+			console.log(error);
+		})
+	}
+	</script>
+</body>
+</html>
