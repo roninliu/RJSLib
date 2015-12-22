@@ -3,19 +3,51 @@
 <head>
 	<meta charset="UTF-8">
 	<title>demo</title>
-	<script type="text/javascript" src="../src/mondo.js"></script>
+	<script type="text/javascript" src="../src/godzilla.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
 	window.onload = function(){
-		R.settings.DEBUG = true;
+		GZL.settings.DEBUG = true;
 
-		R.ajax("POST","",{type:1},
-			function(result){
+		GZL.ajax({
+			
+			data:{site_id:1},
+			method:"POST"
+		},function(result){
 			console.log(result);
-		},function(error){
-			console.log(error);
+		},function(err){
+			console.log(err)
 		})
+
+		GZL.ajax({
+			
+		},function(result){
+			console.log(result);
+		},function(err){
+			console.log(err)
+		})
+		GZL.parseURI()
+		GZL.parseURI("http://www.baidu.com")
+		GZL.generateUUID()
+		GZL.setCookie("name","1221",{
+			expires:10,
+			path:"/",
+			domain:'huizhuang.com'
+		})
+		GZL.setCookie("test","100000",{
+			expires:10,
+			path:"/"
+		})
+		GZL.setCookie("KEY","1111111");
+		GZL.setCookie("age","12岁")
+		GZL.setCookie("user","oo");
+		GZL.getAllCookies();
+		GZL.getCookie("age");
+		GZL.removeCookie("user");
+		GZL.clearCookie()
+		
+		GZL.getAllCookies();
 	}
 	</script>
 </body>
