@@ -12,6 +12,7 @@
  *
  */
 var GZL = (function(root, factory) {
+    "use strict";
 
     //模块名称
     var _MODULE_NAME = "Godzilla";
