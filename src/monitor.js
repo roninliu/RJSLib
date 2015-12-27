@@ -23,12 +23,14 @@ var RMON = (function(root, factory) {
 
     /**
      * [settings 默认参数设置]
-     * @param  {[boolean]} DEBUG    [是否开启调试模式]
+     * @param  {[boolean]} DEBUG    [是否开启调试模式,默认false]
      */
     factory.settings = {
-        DEBUG: true
+        DEBUG: false
     };
 
+
+    
 
 
     /* 暴露 API 工厂*/
