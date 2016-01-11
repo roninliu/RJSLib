@@ -4,11 +4,12 @@
  * use: GZL.method
  * @author   : Ronin Liu
  * @datetime : 2015/12/17
- * @version  : 1.0.0
+ * @version  : 1.2.1
  * @create   : 2015/12/17
  * @update   : 2015/12/17
  * @change Log
  *         2015-12-17 create file
+ *         2016-01-12 优化 ajax
  *
  */
 var GZL = (function(root, factory) {
@@ -17,9 +18,7 @@ var GZL = (function(root, factory) {
     //模块名称
     var _MODULE_NAME = "[Godzilla]";
     //模块版本
-    var _MODULE_VERSION = "1.0.0";
-    /***********************私有方法，内部调用********************/
-
+    var _MODULE_VERSION = "1.2.1";
 
     /*******************  ***接口方法***********************/
     /**
@@ -39,11 +38,7 @@ var GZL = (function(root, factory) {
      * options.data:请求参数
      * options.success:请求成功回调函数
      * options.error:请求失败回调函数
-     * options.:
-     * options.data
-     * 
-     * 
-     * @return {[object]}         [JSON Object]
+     * @return {[object]} [JSON Object]
      */
     factory.ajax = function(options) {
         var xhr = null;
@@ -60,11 +55,6 @@ var GZL = (function(root, factory) {
         options.url = options.url || null;
         options.success = options.success || function() {};
         options.error = options.error || function() {};
-        options.before = options.before || (function() {
-            console.log(data);
-            console.log("loading");
-        })();
-        options.before();
         if (!options.url) {
             if (factory.settings.DEBUG) {
                 console.info(_MODULE_NAME, url);
@@ -99,7 +89,6 @@ var GZL = (function(root, factory) {
                 xhr.open('GET', options.url + '?t=' + random, true);
             }
             xhr.send();
-
         } else if (type == 'POST') {
             xhr.open('POST', options.url, true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -116,103 +105,24 @@ var GZL = (function(root, factory) {
                         resultData = JSON.parse(resultData);
                     } catch (e) {
                         if (factory.settings.DEBUG) {
-                            console.log(_MODULE_NAME, e);
+                            console.log(_MODULE_NAME, "Error:", e);
                         }
                         resultData = resultData;
                     }
                     if (factory.settings.DEBUG) {
-                        console.log(_MODULE_NAME, resultData);
+                        console.log(_MODULE_NAME, "Ajax Result:", resultData);
                     }
                     options.success(resultData);
                 } else {
                     if (factory.settings.DEBUG) {
-                        console.log(_MODULE_NAME, xhr.responseText);
+                        console.log(_MODULE_NAME, "Ajax Result:", xhr.responseText);
                     }
                     options.error(xhr.status);
                 }
             }
         }
-
-
     }
 
-
-
-    /**
-     * [ajax 封装ajax，跨域处理，跨域需要服务器设置header头CORS跨域]
-     * @description  [IE6-IE9不支持跨域处理，只支持IE6-IE9的本域请求]
-     * @param  {[object]} options   [url:请求接口地址，method：请求类型，默认为GET，data：请求参数]
-     * @param  {[function]} success [获取数据成功的回调函数]
-     * @param  {[function]} failed  [请求失败的回调函数]
-     * @return {[object]}         [JSON Object]
-     */
-    factory.ajax1 = function(options, success, failed) {
-        var xhr = null;
-        var method = options.method || "GET";
-        var data = options.data || {};
-        var url = options.url || null;
-        if (!url) {
-            if (factory.settings.DEBUG) {
-                console.log("[EORROR]" + _MODULE_NAME + ": url not defiend!");
-            }
-            return false;
-        }
-        if (root.XMLHttpRequest) {
-            xhr = new XMLHttpRequest();
-            if ("withCredentials" in xhr) {
-                if (factory.settings.DEBUG) {
-                    console.log("[SUCCESS]" + _MODULE_NAME + ": Browser support cross-domain!");
-                }
-            } else {
-                if (factory.settings.DEBUG) {
-                    console.log("[EORROR]" + _MODULE_NAME + ": Browser not support ajax!")
-                }
-                xhr = null;
-            }
-        } else {
-            if (factory.settings.DEBUG) {
-                console.log("[EORROR]" + _MODULE_NAME + ": Browser not support ajax!")
-            }
-            xhr = null;
-        }
-        var type = method.toUpperCase();
-        var random = Math.random();
-        if (typeof data == 'object') {
-            var query = '';
-            for (var key in data) {
-                query += key + '=' + data[key] + '&';
-            }
-            data = query.replace(/&$/, '');
-        }
-
-        if (type == 'GET') {
-            if (data) {
-                xhr.open('GET', url + '?' + data, true);
-            } else {
-                xhr.open('GET', url + '?t=' + random, true);
-            }
-            xhr.send();
-        } else if (type == 'POST') {
-            xhr.open('POST', url, true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.send(data);
-        }
-
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                if (factory.settings.DEBUG) {
-                    console.log("[INFO]" + _MODULE_NAME + ": request status [" + xhr.status + "]");
-                }
-                if (xhr.status == 200) {
-                    success(JSON.parse(xhr.responseText));
-                } else {
-                    if (failed) {
-                        failed(xhr.status);
-                    }
-                }
-            }
-        }
-    };
 
     /**
      * [parseURI 解析URL，可获得相关参数]
@@ -226,6 +136,9 @@ var GZL = (function(root, factory) {
             url = arguments[0];
         } else {
             url = window.location.href
+        }
+        if (factory.settings.DEBUG) {
+            console.log(_MODULE_NAME, url);
         }
         var a = document.createElement('a');
         a.href = url;
@@ -257,18 +170,17 @@ var GZL = (function(root, factory) {
             segments: a.pathname.replace(/^\//, '').split('/')
         };
         if (factory.settings.DEBUG) {
-            console.log("[INFO]" + _MODULE_NAME + ":URL INFO as bellow:");
-            console.log(urlObject);
+            console.log(_MODULE_NAME, "URL INFO:", urlObject);
         }
         return urlObject;
     };
     /**
-     * [getPlatformMethod 获取设备平台]
+     * [getPlatform 获取设备平台]
      * @param  {[boolean]} type  [返回int类型的值还是字符串，可选参数，true返回int，false返回字符串，默认true]
      * @return {[int | string]} [返回设备平台代号]
      * [1:Andriod,2: IOS,3:PC,4:微信,5:未知]
      */
-    factory.getPlatformMethod = function() {
+    factory.getPlatform = function() {
         var isInt = true;
         if (arguments.length !== 0) {
             isInt = arguments[0];
@@ -321,17 +233,23 @@ var GZL = (function(root, factory) {
     };
     /**
      * [generateUUID 生成全球唯一标识UUID]
+     * @param {number} [key] [可选][加密key,只能为数字]
      * @return {[type]} [uuid字符串]
      */
     factory.generateUUID = function() {
-        var d = new Date().getTime();
+        var d = null;
+        if (arguments.length !== 0) {
+            d = arguments[0];
+        } else {
+            d = new Date().getTime();
+        }
         var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
             var r = (d + Math.random() * 16) % 16 | 0;
             d = Math.floor(d / 16);
             return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
         });
         if (factory.settings.DEBUG) {
-            console.log(uuid);
+            console.log(_MODULE_NAME, "UUID:", uuid);
         }
         return uuid;
     };
@@ -369,7 +287,7 @@ var GZL = (function(root, factory) {
             }
             document.cookie = cookie;
             if (factory.settings.DEBUG) {
-                console.log(document.cookie);
+                console.log(_MODULE_NAME, "Cookie:", document.cookie);
             }
             return cookie;
         } else {
@@ -385,7 +303,7 @@ var GZL = (function(root, factory) {
         var cookies = parseCookie();
         var current = decodeURIComponent(cookies[name]) || null;
         if (factory.settings.DEBUG) {
-            console.log("[INFO]" + _MODULE_NAME + ": Cookie " + name + " value is " + current);
+            console.log(_MODULE_NAME, "Cookie " + name, ":", current);
         }
         return current;
     };
@@ -397,10 +315,10 @@ var GZL = (function(root, factory) {
     factory.removeCookie = function(name) {
         var cookies = parseCookie();
         if (cookies[name]) {
-            document.cookie = name + '=;expires=0';
+            document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
         }
         if (factory.settings.DEBUG) {
-            console.log(document.cookie);
+            console.log(_MODULE_NAME, "Cookie:", document.cookie);
         }
     };
     /**
@@ -410,7 +328,10 @@ var GZL = (function(root, factory) {
     factory.clearCookie = function() {
         var cookies = parseCookie();
         for (var key in cookies) {
-            document.cookie = key + "=;expires=0"
+            document.cookie = key + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+        if (factory.settings.DEBUG) {
+            console.log(_MODULE_NAME, "Cookie:", document.cookie);
         }
     };
     /**
@@ -424,25 +345,112 @@ var GZL = (function(root, factory) {
             tmpCookies[key] = decodeURIComponent(cookies[key]);
         }
         if (factory.settings.DEBUG) {
-            console.log(tmpCookies);
+            console.log(_MODULE_NAME, "All Cookie:", tmpCookies);
         }
         return tmpCookies;
     };
 
     /**
-     * [generateMD5 MD5字符串加密]
+     * [Sha1 sha1 加密]
+     * @param {[type]} sIn [输入加密字符串]
+     */
+    factory.Sha1 = function(sIn) {
+        function add(x, y) {
+            return ((x & 0x7FFFFFFF) + (y & 0x7FFFFFFF)) ^ (x & 0x80000000) ^ (y & 0x80000000);
+        }
+
+        function sha1hex(num) {
+            var sHEXChars = "0123456789abcdef";
+            var str = "";
+            for (var j = 7; j >= 0; j--)
+                str += sHEXChars.charAt((num >> (j * 4)) & 0x0F);
+            return str;
+        }
+
+        function alignSHA1(sIn) {
+            var nblk = ((sIn.length + 8) >> 6) + 1;
+            var blks = new Array(nblk * 16);
+            for (var i = 0; i < nblk * 16; i++) blks[i] = 0;
+            for (i = 0; i < sIn.length; i++)
+                blks[i >> 2] |= sIn.charCodeAt(i) << (24 - (i & 3) * 8);
+
+            blks[i >> 2] |= 0x80 << (24 - (i & 3) * 8);
+            blks[nblk * 16 - 1] = sIn.length * 8;
+            return blks;
+        }
+
+        function rol(num, cnt) {
+            return (num << cnt) | (num >>> (32 - cnt));
+        }
+
+        function ft(t, b, c, d) {
+            if (t < 20) return (b & c) | ((~b) & d);
+            if (t < 40) return b ^ c ^ d;
+            if (t < 60) return (b & c) | (b & d) | (c & d);
+            return b ^ c ^ d;
+        }
+
+        function kt(t) {
+            return (t < 20) ? 1518500249 :
+                (t < 40) ? 1859775393 :
+                (t < 60) ? -1894007588 : -899497514;
+        }
+
+        var x = alignSHA1(sIn);
+        var w = new Array(80);
+        var a = 1732584193;
+        var b = -271733879;
+        var c = -1732584194;
+        var d = 271733878;
+        var e = -1009589776;
+        for (var i = 0; i < x.length; i += 16) {
+            var olda = a;
+            var oldb = b;
+            var oldc = c;
+            var oldd = d;
+            var olde = e;
+            for (var j = 0; j < 80; j++) {
+                if (j < 16) w[j] = x[i + j];
+                else w[j] = rol(w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16], 1);
+                var t = add(add(rol(a, 5), ft(j, b, c, d)), add(add(e, w[j]), kt(j)));
+                e = d;
+                d = c;
+                c = rol(b, 30);
+                b = a;
+                a = t;
+            }
+            a = add(a, olda);
+            b = add(b, oldb);
+            c = add(c, oldc);
+            d = add(d, oldd);
+            e = add(e, olde);
+        }
+        var sha1Str = sha1hex(a) + sha1hex(b) + sha1hex(c) + sha1hex(d) + sha1hex(e);
+        if(factory.settings.DEBUG){
+            console.log(_MODULE_NAME,"SHA1:",sha1Str)
+        }
+        return sha1Str;
+    }
+
+
+    /**
+     * [Md5 MD5字符串加密]
      * @param  {[string]} input [输入的字符串]
      * @param  {[string]} key   [加密密钥，可选,有key时，拼接规则key+input]
      * @return {[string]}       [加密后的字符串]
      */
-    factory.generateMD5 = function(input) {
+    factory.Md5 = function(input) {
         var hexStr = '';
         if (arguments.length > 1) {
             hexStr = arguments[1].toString() + input.toString();
         } else {
             hexStr = input;
         }
-        return rstr2hex(raw_md5(hexStr));
+        var md5Str = rstr2hex(raw_md5(hexStr));
+        if(factory.settings.DEBUG){
+            console.log(_MODULE_NAME,"MD5:",md5Str);
+        }
+        return md5Str;
     };
 
     var raw_md5 = function(s) {
@@ -624,12 +632,10 @@ var GZL = (function(root, factory) {
     var parseCookie = function() {
         var cookies = {};
         if (factory.settings.DEBUG) {
-            console.log("[INFO]" + _MODULE_NAME + ": Cookie infomation:");
-            console.log(document.cookie);
+            console.log(_MODULE_NAME, "Cookie infomation:", document.cookie);
         }
         if (document.cookie) {
             var tmpCookies = document.cookie.split(";");
-            console.log(tmpCookies);
             for (var key in tmpCookies) {
                 var index = tmpCookies[key].indexOf("=");
                 var name = tmpCookies[key].substr(0, index).replace(/\s+/g, "");
@@ -638,7 +644,7 @@ var GZL = (function(root, factory) {
             }
         }
         if (factory.settings.DEBUG) {
-            console.log(cookies);
+            console.log(_MODULE_NAME, "Cookie:", cookies);
         }
         return cookies;
     }

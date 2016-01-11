@@ -9,14 +9,21 @@
 
 	$(function() {
 		GZL.ajax({
-			url: "http://xmapi.rls.huizhuang.com/order/Product/productDetailV1.do",
+			url: "xxxx",
 			data: {
 				a: 1
 			},
-			before: function() {
-				a: 2
+			success:function(result){
+				console.log(result);
 			}
 		});
+		console.log(GZL.parseURI());
+		console.log(GZL.getPlatform());
+		console.log(GZL.getPlatform(false));
+		console.log(GZL.generateUUID());
+		console.log(GZL.generateUUID(12345663223));
+		console.log(GZL.Sha1("hz"));
+		console.log(GZL.Md5("hz"));
 	})
 
 }())
