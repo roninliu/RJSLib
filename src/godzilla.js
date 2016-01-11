@@ -15,10 +15,13 @@ var GZL = (function(root, factory) {
     "use strict";
 
     //模块名称
-    var _MODULE_NAME = "Godzilla";
+    var _MODULE_NAME = "[Godzilla]";
     //模块版本
     var _MODULE_VERSION = "1.0.0";
+    /***********************私有方法，内部调用********************/
 
+
+    /*******************  ***接口方法***********************/
     /**
      * [settings 默认参数设置]
      * @param  {[boolean]} DEBUG    [是否开启调试模式,默认false]
@@ -26,6 +29,114 @@ var GZL = (function(root, factory) {
     factory.settings = {
         DEBUG: false
     };
+
+
+    /**
+     * [ajax 封装ajax]
+     * @param  {[object]} options
+     * options.url:请求接口地址
+     * options.method:请求类型，默认为GET
+     * options.data:请求参数
+     * options.success:请求成功回调函数
+     * options.error:请求失败回调函数
+     * options.:
+     * options.data
+     * 
+     * 
+     * @return {[object]}         [JSON Object]
+     */
+    factory.ajax = function(options) {
+        var xhr = null;
+        options = options || null;
+        if (!options) {
+            if (factory.settings.DEBUG) {
+                console.info(_MODULE_NAME, options);
+            }
+            console.error(_MODULE_NAME, "options is required");
+            return false;
+        }
+        options.method = options.method || "GET";
+        options.data = options.data || {};
+        options.url = options.url || null;
+        options.success = options.success || function() {};
+        options.error = options.error || function() {};
+        options.before = options.before || (function() {
+            console.log(data);
+            console.log("loading");
+        })();
+        options.before();
+        if (!options.url) {
+            if (factory.settings.DEBUG) {
+                console.info(_MODULE_NAME, url);
+            }
+            console.error(_MODULE_NAME, "options url is required");
+            return false;
+        }
+        if (root.XMLHttpRequest) {
+            xhr = new XMLHttpRequest();
+            if (factory.settings.DEBUG) {
+                console.info(_MODULE_NAME, "Browser ajax supported");
+            }
+        } else {
+            if (factory.settings.DEBUG) {
+                console.error(_MODULE_NAME, "Browser not support ajax");
+            }
+            xhr = null;
+        }
+        var type = options.method.toUpperCase();
+        var random = Math.random();
+        if (typeof options.data == 'object') {
+            var query = '';
+            for (var key in options.data) {
+                query += key + '=' + options.data[key] + '&';
+            }
+            options.data = query.replace(/&$/, '');
+        }
+        if (type == 'GET') {
+            if (options.data) {
+                xhr.open('GET', options.url + '?' + options.data, true);
+            } else {
+                xhr.open('GET', options.url + '?t=' + random, true);
+            }
+            xhr.send();
+
+        } else if (type == 'POST') {
+            xhr.open('POST', options.url, true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send(options.data);
+        }
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (factory.settings.DEBUG) {
+                    console.log(_MODULE_NAME, "request status:", xhr.status);
+                }
+                if (xhr.status == 200) {
+                    var resultData = xhr.responseText;
+                    try {
+                        resultData = JSON.parse(resultData);
+                    } catch (e) {
+                        if (factory.settings.DEBUG) {
+                            console.log(_MODULE_NAME, e);
+                        }
+                        resultData = resultData;
+                    }
+                    if (factory.settings.DEBUG) {
+                        console.log(_MODULE_NAME, resultData);
+                    }
+                    options.success(resultData);
+                } else {
+                    if (factory.settings.DEBUG) {
+                        console.log(_MODULE_NAME, xhr.responseText);
+                    }
+                    options.error(xhr.status);
+                }
+            }
+        }
+
+
+    }
+
+
 
     /**
      * [ajax 封装ajax，跨域处理，跨域需要服务器设置header头CORS跨域]
@@ -35,7 +146,7 @@ var GZL = (function(root, factory) {
      * @param  {[function]} failed  [请求失败的回调函数]
      * @return {[object]}         [JSON Object]
      */
-    factory.ajax = function(options, success, failed) {
+    factory.ajax1 = function(options, success, failed) {
         var xhr = null;
         var method = options.method || "GET";
         var data = options.data || {};

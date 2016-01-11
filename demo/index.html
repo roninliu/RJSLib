@@ -1,60 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <title>demo</title>
-    <script type="text/javascript" src="../src/godzilla.js"></script>
-</head>
-
-<body>
-    <script type="text/javascript">
-    window.onload = function() {
-        GZL.settings.DEBUG = true;
-
-        GZL.ajax({
-            url: "",
-            data: {
-                site_id: 1
-            },
-            method: "POST"
-        }, function(result) {
-            console.log(result);
-        }, function(err) {
-            console.log(err)
-        })
-
-        GZL.ajax({
-            url: ""
-        }, function(result) {
-            console.log(result);
-        }, function(err) {
-            console.log(err)
-        })
-        GZL.parseURI()
-        GZL.parseURI("http://www.baidu.com")
-        GZL.generateUUID()
-        GZL.setCookie("name", "1221", {
-            expires: 10,
-            path: "/",
-            domain: 'huizhuang.com'
-        })
-        GZL.setCookie("test", "100000", {
-            expires: 10,
-            path: "/"
-        })
-        GZL.setCookie("KEY", "1111111");
-        GZL.setCookie("age", "12岁")
-        GZL.setCookie("user", "oo");
-        GZL.getAllCookies();
-        GZL.getCookie("age");
-        GZL.removeCookie("user");
-        GZL.clearCookie()
-
-        GZL.getAllCookies();
-        console.log(GZL.generateMD5("1452075467","xm_huizhuang_secret_key"))
-    }
-    </script>
-</body>
-
+<script type="text/javascript">
+var stime = new Date().valueOf();
+</script>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Godzilla测试用例</title>
+        <meta name="keywords" content="Godzilla测试用例">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <!--分享使用-->
+        <meta itemprop="name" content="Godzilla测试用例" />
+        <meta itemprop="description" name="description" content="Godzilla测试用例" />
+        <meta itemprop="image" content="img_url" />
+        <meta name="format-detection" content="telephone=no" />
+        <script type="text/javascript" src="jquery-2.1.0.min.js"></script>
+        <script type="text/javascript" src="../src/godzilla.js"></script>
+        <script type="text/javascript" src="demo.js"></script>
+    </head>
+    <body>
+        您应该知道怎么看！！！
+    </body>
 </html>
+<script type="text/javascript">
+var etime = new Date().valueOf();
+</script>
