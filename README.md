@@ -99,14 +99,14 @@ GZL.removeCookie("user");
 ```
 GZL.clearCookie()
 ```
----
-10. Sha1
+--- 
+10 .  Sha1
 Sha1加密
 ```
 GZL.Sha1("msg");
 ```
 ---
-11. md5
+11 .  md5
 md5 加密
 ```
 GZL.Md5("11111");
