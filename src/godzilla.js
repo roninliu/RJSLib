@@ -120,8 +120,8 @@ var GZL = (function(root, factory) {
                     options.error(xhr.status);
                 }
             }
-        }
-    }
+        };
+    };
 
 
     /**
@@ -135,7 +135,7 @@ var GZL = (function(root, factory) {
         if (arguments.length !== 0) {
             url = arguments[0];
         } else {
-            url = window.location.href
+            url = window.location.href;
         }
         if (factory.settings.DEBUG) {
             console.log(_MODULE_NAME, url);
@@ -426,11 +426,11 @@ var GZL = (function(root, factory) {
             e = add(e, olde);
         }
         var sha1Str = sha1hex(a) + sha1hex(b) + sha1hex(c) + sha1hex(d) + sha1hex(e);
-        if(factory.settings.DEBUG){
-            console.log(_MODULE_NAME,"SHA1:",sha1Str)
+        if (factory.settings.DEBUG) {
+            console.log(_MODULE_NAME, "SHA1:", sha1Str);
         }
         return sha1Str;
-    }
+    };
 
 
     /**
@@ -447,8 +447,8 @@ var GZL = (function(root, factory) {
             hexStr = input;
         }
         var md5Str = rstr2hex(raw_md5(hexStr));
-        if(factory.settings.DEBUG){
-            console.log(_MODULE_NAME,"MD5:",md5Str);
+        if (factory.settings.DEBUG) {
+            console.log(_MODULE_NAME, "MD5:", md5Str);
         }
         return md5Str;
     };
@@ -498,21 +498,21 @@ var GZL = (function(root, factory) {
     };
     var md5_cmn = function(q, a, b, x, s, t) {
         return safe_add(bit_rol(safe_add(safe_add(a, q), safe_add(x, t)), s), b);
-    }
+    };
     var safe_add = function(x, y) {
         var lsw = (x & 0xFFFF) + (y & 0xFFFF),
             msw = (x >> 16) + (y >> 16) + (lsw >> 16);
         return (msw << 16) | (lsw & 0xFFFF);
-    }
+    };
     var bit_rol = function(num, cnt) {
         return (num << cnt) | (num >>> (32 - cnt));
-    }
+    };
     var md5_gg = function(a, b, c, d, x, s, t) {
         return md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
-    }
+    };
     var md5_hh = function(a, b, c, d, x, s, t) {
         return md5_cmn(b ^ c ^ d, a, b, x, s, t);
-    }
+    };
     var md5_ii = function(a, b, c, d, x, s, t) {
         return md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
     };
@@ -611,7 +611,7 @@ var GZL = (function(root, factory) {
             d = safe_add(d, oldd);
         }
         return [a, b, c, d];
-    }
+    };
 
     /*
      * Convert an array of little-endian words to a string
@@ -623,7 +623,7 @@ var GZL = (function(root, factory) {
             output += String.fromCharCode((input[i >> 5] >>> (i % 32)) & 0xFF);
         }
         return output;
-    }
+    };
 
     /**
      * [parseCookie 解析cookie，将cookie的字符串解析为Object]
@@ -647,7 +647,7 @@ var GZL = (function(root, factory) {
             console.log(_MODULE_NAME, "Cookie:", cookies);
         }
         return cookies;
-    }
+    };
 
 
     /* 暴露 API 工厂*/

@@ -1,0 +1,36 @@
+{
+  "name": "rjslib",
+  "version": "1.0.0",
+  "description": "RJS Lib\r javascript库，godzilla\r 实现公用库：",
+  "main": "./src/godzilla.js",
+  "scripts": {
+    "test": "\\"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roninliu/RJSLib.git"
+  },
+  "keywords": [
+    "Lib",
+    "js",
+    "gulp",
+    "ajax",
+    "md5",
+    "sha1"
+  ],
+  "author": "RoninLiu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roninliu/RJSLib/issues"
+  },
+  "homepage": "https://github.com/roninliu/RJSLib#readme",
+  "devDependencies": {
+    "del": "^2.2.0",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-jshint": "^2.0.0",
+    "gulp-uglify": "^1.5.1",
+    "jshint": "^2.8.0",
+    "jshint-stylish": "^2.1.0"
+  }
+}
